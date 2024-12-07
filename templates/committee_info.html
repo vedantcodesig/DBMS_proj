@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Committee - AI Violations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .violation-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 600px;
+        }
+
+        .violation-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .search-bar {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 80%;
+        }
+
+        .search-bar button {
+            padding: 8px 16px;
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-bar button:hover {
+            background-color: #6a11cb;
+        }
+
+        .violation {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .violation h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .violation p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .violation button {
+            background-color: #2575fc;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .violation button:hover {
+            background-color: #6a11cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="violation-container">
+        <h1>AI Violations</h1>
+        
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchCaseNumber" placeholder="Enter Case Number to Search">
+            <button onclick="searchViolations()">Search</button>
+        </div>
+
+        <!-- Example of a single violation -->
+        <div class="violation" id="violation1">
+            <h2>Case #001: Plagiarism in Assignment 3</h2>
+            <p><strong>Student Name:</strong> John Doe</p>
+            <p><strong>Subject:</strong> Computer Science 101</p>
+            <p><strong>Description:</strong> Student was found to have copied portions of the assignment.</p>
+            <button onclick="makeDecision(1)">Make Decision</button>
+        </div>
+
+        <!-- Additional violations can be added in a similar way -->
+    </div>
+
+    <script>
+        function makeDecision(violationId) {
+            // Redirect to decision input page with violation ID
+            window.location.href = "decision_input_page.html?case=" + violationId;
+        }
+
+        function searchViolations() {
+            const caseNumber = document.getElementById("searchCaseNumber").value;
+            // For now, just log the search term. Implement actual search functionality here.
+            console.log("Searching for case number:", caseNumber);
+        }
+    </script>
+</body>
+</html>
