@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's AI Violation Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .info-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            overflow-y: auto;
+        }
+
+        .info-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .violation {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .violation h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .violation p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .violation button {
+            background-color: #6a11cb;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .violation button:hover {
+            background-color: #2575fc;
+        }
+
+        .file-violation-btn {
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .file-violation-btn:hover {
+            background-color: #6a11cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-container">
+        <h1>Your Filed Violations</h1>
+
+        <!-- Example of filed violations -->
+        <div class="violation">
+            <h2>Violation #1</h2>
+            <p>Student Name: John Doe</p>
+            <p>Date: 2024-12-01</p>
+            <p>Description: Plagiarism in AI Assignment 3</p>
+            <button onclick="respondToViolation()">Respond</button>
+        </div>
+
+        <div class="violation">
+            <h2>Violation #2</h2>
+            <p>Student Name: Jane Smith</p>
+            <p>Date: 2024-11-28</p>
+            <p>Description: Unethical use of AI during the exam</p>
+            <button onclick="respondToViolation()">Respond</button>
+        </div>
+
+        <!-- Additional violations can be added dynamically -->
+
+        <!-- Button to file a new violation -->
+        <button class="file-violation-btn" onclick="fileNewViolation()">File a New Violation</button>
+    </div>
+
+    <script>
+        function respondToViolation() {
+            alert("Redirecting to respond form...");
+            // Here you could redirect to another page or show a modal for the response
+            window.location.href = "response_form.html"; // Example redirection to another page for responding
+        }
+
+        function fileNewViolation() {
+            alert("Redirecting to file a new violation form...");
+            // Redirecting to a form where a new violation can be filed
+            window.location.href = "file_violation_form.html"; // Example redirection to file a new violation
+        }
+    </script>
+</body>
+</html>

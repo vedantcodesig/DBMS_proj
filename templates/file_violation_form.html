@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File a New Violation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .form-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            box-sizing: border-box;
+        }
+
+        .form-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        .submit-btn {
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #6a11cb;
+        }
+
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>File a New Violation</h1>
+        <form id="violationForm">
+            <!-- Student Name -->
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" name="studentName" required>
+            </div>
+
+            <!-- Subject Name -->
+            <div class="form-group">
+                <label for="subjectName">Subject Name</label>
+                <input type="text" id="subjectName" name="subjectName" required>
+            </div>
+
+            <!-- Violation Description -->
+            <div class="form-group">
+                <label for="violationDescription">Violation Description</label>
+                <textarea id="violationDescription" name="violationDescription" required></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">Submit Violation</button>
+            <!-- Cancel Button -->
+            <button type="button" class="cancel-btn" onclick="cancelForm()">Cancel</button>
+        </form>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById("violationForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const studentName = document.getElementById("studentName").value;
+            const subjectName = document.getElementById("subjectName").value;
+            const violationDescription = document.getElementById("violationDescription").value;
+
+            // You can handle the form data here (e.g., send to a server)
+            console.log("Violation Filed:");
+            console.log("Student Name:", studentName);
+            console.log("Subject Name:", subjectName);
+            console.log("Violation Description:", violationDescription);
+
+            // After submission, reset the form
+            alert("Violation filed successfully!");
+            document.getElementById("violationForm").reset();
+        });
+
+        // Function to handle cancellation
+        function cancelForm() {
+            window.location.href = "index.html"; // Redirect back to the violations list page
+        }
+    </script>
+</body>
+</html>
