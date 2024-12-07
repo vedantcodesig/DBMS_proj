@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .login-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        .login-container h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .login-container button {
+            background-color: #6a11cb;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+        }
+
+        .login-container button:hover {
+            background-color: #2575fc;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .signup-link {
+            color: #6a11cb;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container" id="login-container">
+        <h1>Login</h1>
+        <div class="error-message" id="error-message">Invalid username or password</div>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <span class="signup-link" onclick="showSignupPage()">Sign up</span>
+    </div>
+
+    <div class="login-container" id="signup-container" style="display: none;">
+        <h1>Sign Up</h1>
+        <input type="text" id="new-username" placeholder="Enter new username">
+        <input type="password" id="new-password" placeholder="Enter new password">
+        <button onclick="signup()">Sign Up</button>
+        <span class="signup-link" onclick="showLoginPage()">Back to Login</span>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Mock roles for demonstration purposes
+            const users = {
+                student: { username: "student", password: "123", role: "student" },
+                teacher: { username: "teacher", password: "456", role: "teacher" },
+                committee: { username: "committee", password: "789", role: "committee" }
+            };
+
+            let userRole = null;
+
+            for (const user in users) {
+                if (users[user].username === username && users[user].password === password) {
+                    userRole = users[user].role;
+                    break;
+                }
+            }
+
+            if (userRole) {
+                errorMessage.style.display = 'none';
+                if (userRole === "student") {
+                    window.location.href = "student_info.html";
+                } else if (userRole === "teacher") {
+                    window.location.href = "teacher_info.html";
+                } else if (userRole === "committee") {
+                    window.location.href = "committee_info.html";
+                }
+            } else {
+                errorMessage.style.display = 'block';
+            }
+        }
+
+        function showSignupPage() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('signup-container').style.display = 'block';
+        }
+
+        function showLoginPage() {
+            document.getElementById('signup-container').style.display = 'none';
+            document.getElementById('login-container').style.display = 'block';
+        }
+
+        function signup() {
+            const newUsername = document.getElementById('new-username').value;
+            const newPassword = document.getElementById('new-password').value;
+
+            if (newUsername && newPassword) {
+                localStorage.setItem('username', newUsername);
+                localStorage.setItem('password', newPassword);
+                alert('Sign up successful! You can now log in.');
+                showLoginPage();
+            } else {
+                alert('Please fill in both fields to sign up.');
+            }
+        }
+    </script>
+</body>
+</html>

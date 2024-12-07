@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6a11cb;
+        }
+
+        .violation {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+
+        .violation h3 {
+            margin: 0 0 10px;
+            color: #2575fc;
+        }
+
+        .violation p {
+            margin: 5px 0;
+        }
+
+        .violation button {
+            background-color: #6a11cb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .violation button:hover {
+            background-color: #2575fc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Violations</h1>
+        <div id="violations-list">
+            <!-- Violations will be loaded dynamically -->
+        </div>
+    </div>
+    <script>
+        const violations = [
+            { id: 1, title: "Cheating in Exam", description: "Caught using unauthorized material during the mid-term exam." },
+            { id: 2, title: "Plagiarism", description: "Submitted a project report copied from online sources." },
+            { id: 3, title: "Misuse of AI Tools", description: "Used ChatGPT to complete a take-home assignment without permission." }
+        ];
+
+        function loadViolations() {
+            const violationsList = document.getElementById('violations-list');
+
+            violations.forEach(violation => {
+                const violationDiv = document.createElement('div');
+                violationDiv.className = 'violation';
+
+                violationDiv.innerHTML = `
+                    <h3>${violation.title}</h3>
+                    <p>${violation.description}</p>
+                    <button onclick="respondToViolation(${violation.id})">Respond</button>
+                `;
+
+                violationsList.appendChild(violationDiv);
+            });
+        }
+
+        function respondToViolation(id) {
+            alert(`You are responding to violation ID: ${id}`);
+            // Redirect to a response form or open a modal for response
+        }
+
+        window.onload = loadViolations;
+    </script>
+</body>
+</html>
