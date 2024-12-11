@@ -1,0 +1,14 @@
+{% if violations %}
+    {% for violation in violations %}
+    <div class="violation">
+        <h2>Case #{{ violation.report_id }}: {{ violation.violation_description }}</h2>
+        <p><strong>Student Name:</strong> {{ violation.student_name }}</p>
+        <p><strong>Professor Name:</strong> {{ violation.professor_name }}</p>
+        <p><strong>Date Reported:</strong> {{ violation.date_reported.strftime('%Y-%m-%d') }}</p>
+        <p><strong>Status:</strong> {{ violation.status }}</p>
+        <button onclick="makeDecision({{ violation.report_id }})">Make Decision</button>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No violations found.</p>
+{% endif %}

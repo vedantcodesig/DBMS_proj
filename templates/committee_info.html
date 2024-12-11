@@ -4,37 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Committee - AI Violations</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             margin: 0;
+            padding: 0;
             background: linear-gradient(to right, #6a11cb, #2575fc);
         }
-
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
         .violation-container {
             background: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 600px;
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            overflow-y: auto;
         }
-
-        .violation-container h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #333;
-        }
-
         .search-bar {
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
         }
-
         .search-bar input {
             padding: 8px;
             font-size: 14px;
@@ -42,20 +42,17 @@
             border: 1px solid #ddd;
             width: 80%;
         }
-
-        .search-bar button {
-            padding: 8px 16px;
+        .search-bar button, .violation button, .logout-btn, .pagination button {
             background-color: #2575fc;
             color: white;
+            padding: 8px 16px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
-
-        .search-bar button:hover {
+        .search-bar button:hover, .violation button:hover, .logout-btn:hover, .pagination button:hover {
             background-color: #6a11cb;
         }
-
         .violation {
             background: #f9f9f9;
             padding: 10px;
@@ -63,65 +60,166 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
-
         .violation h2 {
             font-size: 18px;
             margin-bottom: 5px;
         }
-
         .violation p {
             font-size: 14px;
             color: #666;
             margin-bottom: 10px;
         }
-
-        .violation button {
-            background-color: #2575fc;
+        .logout-btn {
+            background-color: #f44336;
+        }
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+        .escalated {
+            color: red;
+            border: 2px solid red;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pagination a {
             color: white;
             padding: 8px 16px;
-            border: none;
+            text-decoration: none;
+            background-color: #2575fc;
+            margin: 0 4px;
             border-radius: 4px;
-            cursor: pointer;
         }
-
-        .violation button:hover {
+        .pagination a:hover {
             background-color: #6a11cb;
+        }
+        .pagination .active {
+            background-color: #6a11cb;
+        }
+        .escalated {
+            color: red;
+            border: 2px solid red;
         }
     </style>
 </head>
 <body>
-    <div class="violation-container">
+    <div class="header">
         <h1>AI Violations</h1>
-        
-        <!-- Search Bar -->
+        <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+    <div class="violation-container">
         <div class="search-bar">
             <input type="text" id="searchCaseNumber" placeholder="Enter Case Number to Search">
             <button onclick="searchViolations()">Search</button>
         </div>
 
-        <!-- Example of a single violation -->
-        <div class="violation" id="violation1">
-            <h2>Case #001: Plagiarism in Assignment 3</h2>
-            <p><strong>Student Name:</strong> John Doe</p>
-            <p><strong>Subject:</strong> Computer Science 101</p>
-            <p><strong>Description:</strong> Student was found to have copied portions of the assignment.</p>
-            <button onclick="makeDecision(1)">Make Decision</button>
+        <div id="violationsContainer">
+            {% for violation in violations %}
+            <div class="violation {% if violation.is_escalated %}escalated{% endif %}" data-report-id="{{ violation.report_id }}">
+                <h2>Case #{{ violation.report_id }}: {{ violation.violation_description }}</h2>
+                <p><strong>Student Name:</strong> {{ violation.student_name }}</p>
+                <p><strong>Professor Name:</strong> {{ violation.professor_name }}</p>
+                <p><strong>Date Reported:</strong> {{ violation.date_reported.strftime('%Y-%m-%d') }}</p>
+                <p><strong>Status:</strong> <span class="status">{{ violation.status }}</span></p>
+                <button onclick="makeDecision({{ violation.report_id }})">Make Decision</button>
+            </div>
+            {% endfor %}
         </div>
 
-        <!-- Additional violations can be added in a similar way -->
+        <div class="pagination">
+            {% for page in range(1, total_pages + 1) %}
+                <a href="{{ url_for('committee_info', page=page) }}" {% if page == current_page %}class="active"{% endif %}>{{ page }}</a>
+            {% endfor %}
+        </div>
     </div>
 
     <script>
-        function makeDecision(violationId) {
-            // Redirect to decision input page with violation ID
-            window.location.href = "decision_input_page.html?case=" + violationId;
-        }
-
         function searchViolations() {
             const caseNumber = document.getElementById("searchCaseNumber").value;
-            // For now, just log the search term. Implement actual search functionality here.
-            console.log("Searching for case number:", caseNumber);
+            $.ajax({
+                url: '/search_violation',
+                type: 'POST',
+                data: JSON.stringify({'case_number': caseNumber}),
+                contentType: 'application/json;charset=UTF-8',
+                success: function(response) {
+                    $('#violationsContainer').html(response);
+                    checkEscalations();
+                },
+                error: function(error) {
+                    console.log(error);
+                    alert('An error occurred while searching. Please try again.');
+                }
+            });
         }
+
+        function makeDecision(violationId) {
+            window.location.href = "/decision_input/" + violationId;
+        }
+
+        function checkSession() {
+            fetch('/check_session', { 
+                method: 'POST',
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                },
+                cache: 'no-store'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.valid) {
+                    window.location.href = "{{ url_for('home') }}";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.location.href = "{{ url_for('home') }}";
+            });
+        }
+
+        function checkEscalations() {
+            $('.violation').each(function() {
+                const reportId = $(this).data('report-id');
+                const status = $(this).find('.status').text();
+                const reportDate = new Date($(this).find('p:contains("Date Reported")').text().split(':')[1].trim());
+                const currentDate = new Date();
+                const timeDiff = currentDate - reportDate;
+                const hoursDiff = timeDiff / (1000 * 60 * 60);
+
+                if (status !== 'Closed' && hoursDiff > 24) {
+                    $(this).addClass('escalated');
+                    $.ajax({
+                        url: '/escalate_violation',
+                        type: 'POST',
+                        data: JSON.stringify({'report_id': reportId}),
+                        contentType: 'application/json;charset=UTF-8',
+                        success: function(response) {
+                            console.log('Violation escalated:', reportId);
+                        },
+                        error: function(error) {
+                            console.error('Error escalating violation:', error);
+                        }
+                    });
+                }
+            });
+        }
+
+        window.onload = function() {
+            checkSession();
+            setInterval(checkSession, 60000);
+            checkEscalations();
+            setInterval(checkEscalations, 300000); 
+        };
+
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+            checkSession();
+        });
     </script>
 </body>
 </html>

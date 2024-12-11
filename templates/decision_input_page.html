@@ -50,22 +50,7 @@
             height: 120px;
         }
 
-        .submit-btn {
-            background-color: #2575fc;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .submit-btn:hover {
-            background-color: #6a11cb;
-        }
-
-        .cancel-btn {
-            background-color: #f44336;
+        .submit-btn, .cancel-btn, .history-btn, .docs-btn {
             color: white;
             padding: 10px 20px;
             border: none;
@@ -75,8 +60,42 @@
             margin-top: 10px;
         }
 
+        .submit-btn {
+            background-color: #2575fc; 
+        }
+
+        .submit-btn:hover {
+            background-color: #6a11cb; 
+        }
+
+        .cancel-btn {
+            background-color: #f44336; 
+        }
+
         .cancel-btn:hover {
             background-color: #d32f2f;
+        }
+
+        .history-btn {
+            background-color: #4CAF50;
+        }
+
+        .history-btn:hover {
+            background-color: #45a049; 
+        }
+        
+        .docs-btn {
+            background-color: #ff9800; 
+        }
+
+        .docs-btn:hover {
+            background-color: #fb8c00;
+        }
+        .checkbox-group {
+            margin-top: 15px;
+        }
+        .checkbox-group label {
+            margin-right: 20px;
         }
     </style>
 </head>
@@ -86,7 +105,7 @@
         
         <div class="form-group">
             <label for="violationCase">Violation Case #</label>
-            <input type="text" id="violationCase" disabled value="Case #001">
+            <input type="text" id="violationCase" disabled value="Case #{{ violation.report_id }}">
         </div>
 
         <div class="form-group">
@@ -94,27 +113,98 @@
             <textarea id="decisionDescription" required placeholder="Enter your decision here..."></textarea>
         </div>
 
+        <div class="checkbox-group">
+            <label>
+                <input type="radio" name="appeal-decision" value="accept"> Accept Appeal
+            </label>
+            <label>
+                <input type="radio" name="appeal-decision" value="reject"> Reject Appeal
+            </label>
+        </div>
+
         <button type="submit" class="submit-btn" onclick="submitDecision()">Submit Decision</button>
+        
+        <button type="button" class="history-btn" onclick="checkStatusHistory({{ violation.report_id }})">Check Status History</button>
+
+        <button type="button" class="docs-btn" onclick="checkDocuments({{ violation.report_id }})">Check Documents</button>
+
         <button type="button" class="cancel-btn" onclick="cancelDecision()">Cancel</button>
     </div>
 
     <script>
-        function submitDecision() {
-            const decisionDescription = document.getElementById("decisionDescription").value;
+     function submitDecision() {
+    const decisionDescription = document.getElementById("decisionDescription").value;
+    const violationId = document.getElementById("violationCase").value.split("#")[1];
 
-            if (decisionDescription.trim()) {
-                // Here you can process the decision (e.g., send to a server)
+    if (decisionDescription.trim()) {
+        fetch('/submit_decision', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                violation_id: violationId,
+                decision: decisionDescription 
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
                 alert("Decision submitted successfully!");
-                // Optionally redirect to another page after submission
-                window.location.href = "committee_page.html"; // Redirect to committee page
+                hideViolation(violationId); 
             } else {
-                alert("Please provide a decision.");
+                alert("Error submitting decision: " + data.message);
             }
-        }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert("An error occurred while submitting the decision.");
+        });
+    } else {
+        alert("Please provide a decision.");
+    }
+}
 
-        function cancelDecision() {
-            window.location.href = "committee_page.html"; // Cancel and redirect to committee page
-        }
+
+
+    
+
+      function hideViolation(violationId) {
+          fetch('/hide_violation', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  violation_id: violationId
+              }),
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  window.location.href = "{{ url_for('committee_info') }}";
+              } else {
+                  alert("Error hiding violation: " + data.message);
+              }
+          })
+          .catch((error) => {
+              console.error('Error:', error);
+              alert("An error occurred while hiding the violation.");
+          });
+      }
+
+
+      function checkStatusHistory(violationId) {
+          window.location.href = "/status_history/" + violationId;
+      }
+
+      function checkDocuments(violationId) {
+          window.location.href = "/documents/" + violationId;
+      }
+
+      function cancelDecision() {
+          window.location.href = "{{ url_for('committee_info') }}";
+      }
     </script>
 </body>
 </html>

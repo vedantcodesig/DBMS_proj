@@ -40,7 +40,8 @@
             display: block;
         }
 
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 10px;
             border-radius: 4px;
@@ -86,55 +87,20 @@
 <body>
     <div class="form-container">
         <h1>File a New Violation</h1>
-        <form id="violationForm">
-            <!-- Student Name -->
+        <form id="violationForm" action="{{ url_for('submit_violation') }}" method="POST">
             <div class="form-group">
                 <label for="studentName">Student Name</label>
                 <input type="text" id="studentName" name="studentName" required>
             </div>
 
-            <!-- Subject Name -->
-            <div class="form-group">
-                <label for="subjectName">Subject Name</label>
-                <input type="text" id="subjectName" name="subjectName" required>
-            </div>
-
-            <!-- Violation Description -->
             <div class="form-group">
                 <label for="violationDescription">Violation Description</label>
                 <textarea id="violationDescription" name="violationDescription" required></textarea>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn">Submit Violation</button>
-            <!-- Cancel Button -->
-            <button type="button" class="cancel-btn" onclick="cancelForm()">Cancel</button>
-        </form>
-    </div>
-
-    <script>
-        // Handle form submission
-        document.getElementById("violationForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent default form submission
-            const studentName = document.getElementById("studentName").value;
-            const subjectName = document.getElementById("subjectName").value;
-            const violationDescription = document.getElementById("violationDescription").value;
-
-            // You can handle the form data here (e.g., send to a server)
-            console.log("Violation Filed:");
-            console.log("Student Name:", studentName);
-            console.log("Subject Name:", subjectName);
-            console.log("Violation Description:", violationDescription);
-
-            // After submission, reset the form
-            alert("Violation filed successfully!");
-            document.getElementById("violationForm").reset();
-        });
-
-        // Function to handle cancellation
-        function cancelForm() {
-            window.location.href = "index.html"; // Redirect back to the violations list page
-        }
-    </script>
+             <button type="submit" class="submit-btn">Submit Violation</button>
+             <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('teacher_info') }}'">Cancel</button>
+         </form>
+     </div>
 </body>
 </html>

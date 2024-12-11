@@ -41,6 +41,10 @@
             font-family: Arial, sans-serif;
         }
 
+        .form-container input[type="file"] {
+            margin-top: 10px;
+        }
+
         .form-container button {
             background-color: #6a11cb;
             color: white;
@@ -52,26 +56,70 @@
         }
 
         .form-container button:hover {
-            background-color: #2575fc;
+            background-color: #2575fc; 
+        }
+        .dropdown {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h1>Respond to Violation</h1>
+        <select id="responseType" class="dropdown">
+            <option value="">Select a response</option>
+            <option value="Accept All">Accept violation and consequences</option>
+            <option value="Reject All">Reject violation and consequences</option>
+            <option value="Accept Violation">Accept violation but reject consequences</option>
+        </select>
         <textarea id="response" placeholder="Type your explanation here..."></textarea>
+                <input type="file" id="document" accept=".pdf,.doc,.docx" />
+        
         <button onclick="submitResponse()">Submit Response</button>
     </div>
 
     <script>
         function submitResponse() {
+            const responseType = document.getElementById('responseType').value;
             const response = document.getElementById('response').value;
+            const fileInput = document.getElementById('document');
+            
+            if (responseType && (response.trim() || fileInput.files.length > 0)) {
+                const formData = new FormData();
+                formData.append('report_id', {{ violation.report_id }});
+                formData.append('response_type', responseType);
+                formData.append('comment_text', response);
+                
+                // Append the file if one is selected
+                if (fileInput.files.length > 0) {
+                    formData.append('document', fileInput.files[0]);
+                }
 
-            if (response.trim()) {
-                alert('Your response has been submitted successfully!');
-                // Here, you can add logic to send the response to the server.
+                fetch('/submit_response', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Your response has been submitted successfully!');
+                        window.location.href = "{{ url_for(session['role'] + '_info') }}";
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while submitting your response.');
+                });
             } else {
-                alert('Please type your response before submitting.');
+                alert('Please select a response type and either type your response or upload a document before submitting.');
             }
         }
     </script>

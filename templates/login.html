@@ -8,11 +8,39 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
             min-height: 100vh;
             margin: 0;
             background: linear-gradient(to right, #6a11cb, #2575fc);
+        }
+
+        .header {
+            background-color: #1E407C;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header img {
+            width: 50px;
+            height: 50px;
+            margin-right: 20px;
+            object-fit: contain;
+            background-color: transparent;
+            display: block;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
         .login-container {
@@ -22,16 +50,18 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 300px;
             text-align: center;
+            margin-bottom: 60px;
         }
 
-        .login-container h1 {
+        .login-container h2 {
             margin-bottom: 20px;
             font-size: 24px;
             color: #333;
         }
 
         .login-container input[type="text"],
-        .login-container input[type="password"] {
+        .login-container input[type="password"],
+        .login-container input[type="email"] {
             width: calc(100% - 20px);
             padding: 10px;
             margin: 10px 0;
@@ -58,7 +88,7 @@
         .error-message {
             color: red;
             font-size: 14px;
-            display: none;
+            display: block;
             margin-bottom: 10px;
         }
 
@@ -72,62 +102,59 @@
         .signup-link:hover {
             text-decoration: underline;
         }
+
+        .footer {
+            background-color: #1E407C;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container" id="login-container">
-        <h1>Login</h1>
-        <div class="error-message" id="error-message">Invalid username or password</div>
-        <input type="text" id="username" placeholder="Username">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <span class="signup-link" onclick="showSignupPage()">Sign up</span>
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/em.png') }}" alt="Logo">
+        <h1>Penn State Graduate School</h1>
     </div>
 
-    <div class="login-container" id="signup-container" style="display: none;">
-        <h1>Sign Up</h1>
-        <input type="text" id="new-username" placeholder="Enter new username">
-        <input type="password" id="new-password" placeholder="Enter new password">
-        <button onclick="signup()">Sign Up</button>
-        <span class="signup-link" onclick="showLoginPage()">Back to Login</span>
+    <div class="content">
+        <div class="login-container" id="login-container">
+            <h2>Login</h2>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error-message">{{ messages[0] }}</div>
+            {% endif %}
+            {% endwith %}
+            <form action="{{ url_for('login') }}" method="POST">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <span class="signup-link" onclick="showSignupPage()">Sign up</span>
+        </div>
+
+        <div class="login-container" id="signup-container" style="display: none;">
+            <h2>Sign Up</h2>
+            <form action="{{ url_for('signup') }}" method="POST">
+                <input type="text" name="new_username" placeholder="Enter new username" required>
+                <input type="password" name="new_password" placeholder="Enter new password" required>
+                <input type="email" name="email" placeholder="Enter email" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <span class="signup-link" onclick="showLoginPage()">Back to Login</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Academic Integrity Platform | Penn State Graduate School</p>
     </div>
 
     <script>
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-
-            // Mock roles for demonstration purposes
-            const users = {
-                student: { username: "student", password: "123", role: "student" },
-                teacher: { username: "teacher", password: "456", role: "teacher" },
-                committee: { username: "committee", password: "789", role: "committee" }
-            };
-
-            let userRole = null;
-
-            for (const user in users) {
-                if (users[user].username === username && users[user].password === password) {
-                    userRole = users[user].role;
-                    break;
-                }
-            }
-
-            if (userRole) {
-                errorMessage.style.display = 'none';
-                if (userRole === "student") {
-                    window.location.href = "student_info.html";
-                } else if (userRole === "teacher") {
-                    window.location.href = "teacher_info.html";
-                } else if (userRole === "committee") {
-                    window.location.href = "committee_info.html";
-                }
-            } else {
-                errorMessage.style.display = 'block';
-            }
-        }
-
         function showSignupPage() {
             document.getElementById('login-container').style.display = 'none';
             document.getElementById('signup-container').style.display = 'block';
@@ -136,20 +163,6 @@
         function showLoginPage() {
             document.getElementById('signup-container').style.display = 'none';
             document.getElementById('login-container').style.display = 'block';
-        }
-
-        function signup() {
-            const newUsername = document.getElementById('new-username').value;
-            const newPassword = document.getElementById('new-password').value;
-
-            if (newUsername && newPassword) {
-                localStorage.setItem('username', newUsername);
-                localStorage.setItem('password', newPassword);
-                alert('Sign up successful! You can now log in.');
-                showLoginPage();
-            } else {
-                alert('Please fill in both fields to sign up.');
-            }
         }
     </script>
 </body>
